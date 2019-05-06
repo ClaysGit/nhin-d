@@ -106,5 +106,27 @@ namespace Health.Direct.Agent.Tests
             Assert.True(!string.IsNullOrEmpty(disposition));
             Assert.True(SMIMEStandard.EncryptedEnvelopeDisposition == disposition);
         }
+
+        [Fact]
+        public void TestCryptographerLineLengths()
+        {
+            string messageText = m_tester.ReadMessageText("simple.eml");
+            Message message = MimeSerializer.Default.Deserialize<Message>(messageText);
+
+            SignedEntity signedEntity = m_cryptographer.Sign(message, m_cert);
+            string signedEntityText = signedEntity.Aggregate("", (s, e) => s += e.ToString());
+            string[] signedEntityLines = signedEntityText.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            int longestDecryptedLine = signedEntityLines.Max(l => l.Length);
+
+            MimeEntity encryptedEntity = m_cryptographer.Encrypt(message, m_cert);
+            string encryptedEntityText = encryptedEntity.ToString();
+            string[] encryptedEntityLines = encryptedEntityText.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            int longestEncryptedLine = encryptedEntityLines.Max(l => l.Length);
+
+            //RFC 2822 Section 2.1.1 sets a maximum line length of 998 + CRLF.
+            //https://www.ietf.org/rfc/rfc2822.txt
+            Assert.True(longestEncryptedLine < 998);
+            Assert.True(longestDecryptedLine < 998);
+        }
     }
 }

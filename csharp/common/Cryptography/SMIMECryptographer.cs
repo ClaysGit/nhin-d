@@ -449,7 +449,7 @@ namespace Health.Direct.Common.Cryptography
             {
                 ContentType = SMIMEStandard.SignatureContentTypeHeaderValue,
                 ContentTransferEncoding = TransferEncoding.Base64.AsString(),
-                Body = new Body(Convert.ToBase64String(signatureBytes))
+                Body = new Body(Convert.ToBase64String(signatureBytes, Base64FormattingOptions.InsertLineBreaks))
             };
             signature.ContentDisposition = SMIMEStandard.SignatureDisposition;
             return signature;
