@@ -118,7 +118,7 @@ namespace Health.Direct.Agent.Tests
             string[] signedEntityLines = signedEntityText.Split(new[] { "\r\n" }, StringSplitOptions.None);
             int longestDecryptedLine = signedEntityLines.Max(l => l.Length);
 
-            MimeEntity encryptedEntity = m_cryptographer.Encrypt(message, m_cert);
+            MimeEntity encryptedEntity = m_cryptographer.Encrypt(signedEntity.ToEntity(), m_cert);
             string encryptedEntityText = encryptedEntity.ToString();
             string[] encryptedEntityLines = encryptedEntityText.Split(new[] { "\r\n" }, StringSplitOptions.None);
             int longestEncryptedLine = encryptedEntityLines.Max(l => l.Length);
